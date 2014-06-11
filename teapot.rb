@@ -7,21 +7,21 @@ teapot_version "1.0.0"
 
 define_target "build-files" do |target|
 	target.provides "Build/Files" do
-		define "copy.files", Rule do
+		define Rule, "copy.files" do
+			# The input prefix where files are copied from:
 			input :source, multiple: true
 			
+			# The output prefix where files will be copied to:
 			parameter :prefix
 			
+			# Compute the output files by rebasing them into the destination prefix:
 			output :files, implicit: true, multiple: true do |arguments|
 				arguments[:source].to_paths.rebase(arguments[:prefix])
 			end
 			
 			apply do |arguments|
 				arguments[:source].each do |path, root|
-					path = Pathname(path)
-					
-					relative_path = Pathname(path).relative_path_from(Pathname(root)).to_s
-					destination_path = Pathname(arguments[:prefix]) + relative_path
+					destination_path = Pathname(arguments[:prefix]) + path.relative_path
 				
 					if path.directory?
 						# Make a directory at the destination:
@@ -34,6 +34,23 @@ define_target "build-files" do |target|
 						fs.cp(path, destination_path)
 					end
 				end
+			end
+		end
+		
+		define Rule, "copy.headers" do
+			input :headers, multiple: true
+			
+			# We copy headers into a prefix + "include" directory:
+			parameter :prefix do |path|
+				path + "include"
+			end
+			
+			output :files, implicit: true, multiple: true do |arguments|
+				arguments[:headers].to_paths.rebase(arguments[:prefix])
+			end
+			
+			apply do |arguments|
+				copy source: arguments[:headers], prefix: arguments[:prefix]
 			end
 		end
 	end

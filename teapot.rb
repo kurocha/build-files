@@ -46,7 +46,7 @@ define_target "build-files" do |target|
 			end
 			
 			output :files, implicit: true, multiple: true do |arguments|
-				arguments[:headers].to_paths.rebase(arguments[:prefix])
+				arguments[:headers].to_paths.rebase(arguments[:prefix] + "include")
 			end
 			
 			apply do |arguments|

@@ -40,13 +40,13 @@ define_target "build-files" do |target|
 		define Rule, "copy.headers" do
 			input :headers, multiple: true
 			
-			# We copy headers into a prefix + "include" directory:
-			parameter :prefix do |path|
-				path + "include"
+			parameter :prefix, optional: true do |path, arguments|
+				# We update the provided prefix as it is used to rebase the outputs:
+				arguments[:prefix] = path || (environment[:install_prefix] + "include")
 			end
 			
 			output :files, implicit: true, multiple: true do |arguments|
-				arguments[:headers].to_paths.rebase(arguments[:prefix] + "include")
+				arguments[:headers].to_paths.rebase(arguments[:prefix])
 			end
 			
 			apply do |arguments|

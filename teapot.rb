@@ -53,5 +53,22 @@ define_target "build-files" do |target|
 				copy source: arguments[:headers], prefix: arguments[:prefix]
 			end
 		end
+		
+		define Rule, "copy.binaries" do
+			input :binaries, multiple: true
+			
+			parameter :prefix, optional: true do |path, arguments|
+				# We update the provided prefix as it is used to rebase the outputs:
+				arguments[:prefix] = path || (environment[:install_prefix] + "bin")
+			end
+			
+			output :files, implicit: true, multiple: true do |arguments|
+				arguments[:binaries].to_paths.rebase(arguments[:prefix])
+			end
+			
+			apply do |arguments|
+				copy source: arguments[:binaries], prefix: arguments[:prefix]
+			end
+		end
 	end
 end

@@ -52,6 +52,19 @@ define_target "build-files" do |target|
 			end
 		end
 		
+		define Rule, "copy.assets" do
+			input :assets, multiple: true
+			
+			parameter :prefix, optional: true do |path, arguments|
+				# We update the provided prefix as it is used to rebase the outputs:
+				arguments[:prefix] = path || (environment[:install_prefix] + "share")
+			end
+			
+			apply do |arguments|
+				copy source: arguments[:assets], prefix: arguments[:prefix]
+			end
+		end
+		
 		define Rule, "copy.binaries" do
 			input :binaries, multiple: true
 			

@@ -44,7 +44,7 @@ define_target "build-files" do |target|
 			
 			parameter :prefix, optional: true do |path, parameters|
 				# We update the provided prefix as it is used to rebase the outputs:
-				parameters[:prefix] = environment[:install_prefix] + prefix + "include"
+				parameters[:prefix] = environment[:install_prefix] + path + "include"
 			end
 			
 			apply do |parameters|

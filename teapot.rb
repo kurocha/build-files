@@ -3,7 +3,7 @@
 #  This file is part of the "Teapot" project, and is released under the MIT license.
 #
 
-teapot_version "1.0.0"
+teapot_version "3.0"
 
 define_target "build-files" do |target|
 	target.provides "Build/Files" do
@@ -44,7 +44,7 @@ define_target "build-files" do |target|
 			
 			parameter :prefix, optional: true do |path, parameters|
 				# We update the provided prefix as it is used to rebase the outputs:
-				parameters[:prefix] = path || (environment[:install_prefix] + "include")
+				parameters[:prefix] = environment[:install_prefix] + prefix + "include"
 			end
 			
 			apply do |parameters|
@@ -57,7 +57,7 @@ define_target "build-files" do |target|
 			
 			parameter :prefix, optional: true do |path, parameters|
 				# We update the provided prefix as it is used to rebase the outputs:
-				parameters[:prefix] = path || (environment[:install_prefix] + "share")
+				parameters[:prefix] = environment[:install_prefix] + path + "share"
 			end
 			
 			apply do |parameters|
